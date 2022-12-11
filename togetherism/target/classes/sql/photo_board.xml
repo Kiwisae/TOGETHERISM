@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+ <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="photo_boardns">
+<insert id="create" parameterType="photo_board">
+insert into photo_board values(photo_board_seq.nextval,#{club_num},#{photo_member_email},sysdate,
+#{photo_content, jdbcType=VARCHAR},#{photo_file})
+</insert>
+
+<select id="listcount" resultType="int" parameterType="int">
+select count(*) from photo_board where club_num = #{club_num}
+</select>
+
+<select id="list" resultType="photo_board" parameterType="Map">
+select * from (select rownum rnum, a.* from (
+select * from photo_board where club_num = #{club_num} order by photo_date desc) a)
+where rnum &gt;= #{startRow} and rnum &lt;= #{endRow}
+</select>
+
+<delete id="delete" parameterType="int">
+delete from photo_board where photo_num = #{photo_num}
+</delete>
+
+<select id="cont" resultType="photo_board" parameterType="int">
+select * from photo_board where photo_num = #{photo_num}
+</select>
+
+<update id="update" parameterType="photo_board">
+update photo_board set photo_content=#{photo_content, jdbcType=VARCHAR}, photo_file=#{photo_file} where photo_num = #{photo_num}
+</update>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

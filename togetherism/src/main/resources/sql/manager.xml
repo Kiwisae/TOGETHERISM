@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+ <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="managerns">
+	
+	<!-- 관리자 1명의 정보 가져오기 -->
+	<select id="getManager" resultType="manager">
+		select * from manager where manager_email = #{manager_email,jdbcType=VARCHAR}	
+	</select>
+	
+	<!-- 관리자 전체 정보 가져오기 -->
+	<select id="getManagerlist" parameterType="String" resultType="manager">
+		select * from manager
+	</select>
+	
+	<!-- 2일전 가입한 회원의 수 -->
+	<select id="get2dago" resultType="int">
+		select count(member_reg_date) from member where substr(member_reg_date, -2) = substr(sysdate-2, -2)
+	</select>
+	
+	<!-- 1일전 가입한 회원의 수 -->
+	<select id="get1dago" resultType="int">
+		select count(member_reg_date) from member where substr(member_reg_date, -2) = substr(sysdate-1, -2)
+	</select>
+	
+	<!-- 오늘 가입한 회원의 수 -->
+	<select id="getToday" resultType="int">
+		select count(member_reg_date) from member where substr(member_reg_date, -2) = substr(sysdate, -2)
+	</select>
+	
+	<!-- 전체 회원의 수 -->
+	<select id="memberCount" resultType="int">
+		select count (*) from member
+	</select>
+	
+	<!-- 신고 많이 당한 회원 리스트 -->
+	<select id="getReport" resultType="together.model.MemberReportInfo">
+		select member.member_nickname, count(report.member_email) report_count
+		from report, member
+		where report.member_email = member.member_email
+		group by member.member_nickname
+		order by report_count desc
+	</select>
+	
+	<!-- 전체 회원 목록 가져오기  -->
+	<select id="memberList" parameterType="int" resultType="member">
+		<![CDATA[
+		select * from (select rownum rnum, member.* from (
+		select * from member order by member_reg_date desc) member )
+		where rnum >= ((#{page} - 1) * 10 + 1 ) and rnum <= (#{page} * 10)
+		]]>
+	</select>
+	
+	<!-- 이메일, 닉네임 검색 목록 가져오기 -->
+	<select id="getSearch" resultType="member">
+<!-- 			select * from (select rownum rnum, member.* from (
+			select * from member 
+			<where>
+				<if test="keyword != null and search != null">
+					${search} like '%'||#{keyword}||'%'
+				</if>
+			</where>
+			order by member_reg_date desc) member )
+			where rnum &gt;= ((#{page} - 1) * 10 + 1 ) and rnum &lt;= (#{page} * 10) -->
+			select * from member
+		<where>
+			<if test="keyword != null and search != null">
+				${search} like '%'||#{keyword}||'%'
+			</if>
+		</where>
+	</select>
+	
+	
+	<!-- 현재 활동중인 회원의 수 -->
+	<select id="nowMember" resultType="int">
+		select count(member_del_yn) from member where member_del_yn = 'N'
+	</select>
+	
+	<!-- 현재 활동중인 회원 목록 가져오기  -->
+	<select id="nowmemberList" parameterType="int" resultType="member">
+		<![CDATA[
+		select * from (select rownum rnum, member.* from (
+		select * from member where member_del_yn = 'N' order by member_reg_date desc) member )
+		where rnum >= ((#{page} - 1) * 10 + 1 ) and rnum <= (#{page} * 10)
+		]]>
+	</select>
+	
+	<!-- 특정 회원 1명의 정보 가져오기 -->
+	<select id="getMember" parameterType="int" resultType="member">
+		select * from member where member_email = #{member_email}
+	</select>
+	
+	<!-- 특정 회원 1명의 신고 횟수 가져오기 -->
+	<select id="reportCount" resultType="int">
+		select count (*) from report where member_email= #{member_email}
+	</select>
+	
+	<!-- 특정 회원의 모임장 리스트 가져오기 -->
+	<select id="getClub" resultType="club">
+		select * from club where club_host_email = #{member_email}
+	</select>
+	
+	<!-- 특정 회원의 가입 모임 리스트 가져오기 -->
+	<select id="getJoinclub" resultType="together.model.ClubJoinInfo">
+		select * from club_member_join, club where club_member_join.club_num = club.club_num and member_email = #{member_email}
+	</select>
+	
+	<!-- 특정 회원이 참석한 이벤트 목록에서 event_num 가져오기 -->
+	<select id="getAttendevent" resultType="event_user_attend">
+		select * from event_user_attend where member_email = #{member_email,jdbcType=VARCHAR}
+	</select>
+	
+	<!-- 특정 회원이 참석한 이벤트 목록 가져오기 -->
+	<select id="getEvent" parameterType="int" resultType="event">
+		select * from event where event_num = #{event_num,jdbcType=VARCHAR} order by event_num asc
+	</select>
+	
+	<!-- 특정 회원 강제 탈퇴 -->
+	<update id="memberDelete" parameterType="member">
+		update member set member_del_yn = 'Y', member_del_date = sysdate,
+		member_del_reason = #{member_del_reason} where member_email = #{member_email}
+	</update>
+	
+
+</mapper>

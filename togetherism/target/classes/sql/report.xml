@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+ <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="reportns">
+
+		
+	<!-- 중복 신고인지 검색 -->
+	<select id="report_check" parameterType="report" resultType="report">
+		select * from report where member_email=#{member_email} and report_member_email=#{report_member_email}
+	</select>
+	
+	<!-- 유저 신고 등록 -->
+	<insert id="report_insert" parameterType="report">
+		insert into report(report_num, member_email, report_member_email, report_reason) 
+		values(report_seq.nextval, #{member_email}, #{report_member_email}, #{report_reason} )
+	</insert>
+	
+	<!-- 신고당한 횟수 카운트 검색 -->
+	<select id="report_count" parameterType="String" resultType="int">
+		select count(*) from report where member_email=#{member_email}
+	</select>
+
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

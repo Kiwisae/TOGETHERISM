@@ -1,0 +1,11 @@
+@charset "UTF-8";
+.search-input{
+	width:700px;
+	border-radius:8px;
+	height:40px;
+}
+.search-button{
+	border-radius:20px;
+	width:100px;
+	height:40px;
+} 

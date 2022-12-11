@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+ <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="heartns">
+
+	<insert id="insert_heart" parameterType="heart">
+		insert into
+		heart(heart_num,club_num,member_email)
+		values(heart_seq.nextval,#{club_num},#{member_email})
+	</insert>
+
+	<delete id="remove_heart" parameterType="heart">
+		delete from heart where
+		club_num=#{club_num} and
+		member_email=#{member_email}
+	</delete>
+
+	<resultMap type="together.model.ClubHeartJoin"
+		id="heart_list">
+		<result property="club.club_num" column="club.club_num"/>
+		<result property="club.club_image" column="club.club_image" />
+		<result property="club.club_name" column="club.club_name" />
+		<result property="club.club_region" column="club.club_region" />
+		<result property="club.club_keyword" column="club.club_keyword" />
+		<result property="club.club_member_count"
+			column="club.club_member_count" />
+		<result property="club.club_member_limit"
+			column="club.club_member_limit" />
+	</resultMap>
+
+	<!-- 내가 좋아요한 모임 목록 -->
+	<select id="heart_list" parameterType="HashMap" resultType="club">
+	select * from (
+	select rownum rnum, heart.* from (select heart_num,club.club_image,club.club_name,club.club_region,
+	club.club_keyword,club.club_member_count,club.club_member_limit,club.club_num
+	from club inner join heart 
+	on club.club_num = heart.club_num where heart.member_email=#{session_email} order by heart_num desc) heart)
+	where rnum between #{startRow} and #{endRow}
+	</select>
+	
+	<!-- 총 갯수 -->
+	<select id="heart_listcount" parameterType="HashMap" resultType="int">
+	select count(club_name) from club where club_num in
+	(select club_num from heart where member_email=#{session_email})
+	</select>
+	
+	<!-- 하트 검사 -->
+	<select id="heart_check" parameterType="heart" resultType="heart">
+	select * from heart where club_num=#{club_num} and member_email=#{member_email}
+	</select> 
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,12 @@
+@charset "UTF-8";
+.yellow-border{
+	border:6px solid #ffc107;
+
+}
+.beige-full{
+	background-color:beige;
+	
+}
+.yellow-full{
+	background-color:#ffc107;
+}
