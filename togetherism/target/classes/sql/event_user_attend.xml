@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+ <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="event_user_attendns">
+
+    <!-- 모임 가입 여부 검색-->
+    <select id="join_check" parameterType="club_member_join" resultType="club_member_join">
+     	select * from club_member_join where club_num=#{club_num} and member_email=#{member_email}
+    </select>
+
+    <!-- 이벤트 참여 검색 -->
+    <select id="attend_check" parameterType="event_user_attend" resultType="event_user_attend" >
+     	select * from event_user_attend where event_num=#{event_num} and member_email=#{member_email}
+    </select>
+    
+    <!-- 이벤트 참여 -->
+  	<insert id="attend_insert" parameterType="event_user_attend">
+		insert into event_user_attend
+		(attend_num, event_num, member_email)
+		values
+		(event_user_attend_seq.nextval, #{event_num},#{member_email})
+	</insert>
+	
+	<!-- 이벤트 참여 취소-->
+	<delete id="attend_delete">
+		delete from event_user_attend where event_num=#{event_num} and member_email=#{member_email}
+	</delete>
+	
+	<!-- 참여한 이벤트 리스트 페이징 처리-->
+	<select id="attend_mylist" parameterType="hashMap" resultType="event">
+		select * from (select rownum rnum, eventt.* from 
+    	(select * from event where event_num in 
+        (select event_num from event_user_attend where member_email=#{email})
+    	order by event_date desc) eventt ) where rnum between #{startRow} and #{endRow}
+	</select>
+	
+	<!-- 참여한 이벤트 갯수-->
+	<select id="attend_mylistcount" parameterType="String" resultType="int">
+		select count(*) from event_user_attend where member_email=#{email}
+	</select>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

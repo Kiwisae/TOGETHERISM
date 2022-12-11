@@ -1,0 +1,7 @@
+@charset "UTF-8";
+.hidden{
+	overflow: hidden; 
+	text-overflow: ellipsis; 
+	white-space:nowrap;
+	word-break:break-all;
+}

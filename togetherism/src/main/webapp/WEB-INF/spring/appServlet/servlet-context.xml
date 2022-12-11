@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/mvc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc https://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+
+	<!-- DispatcherServlet Context: defines this servlet's request-processing infrastructure -->
+	
+	<!-- Enables the Spring MVC @Controller programming model -->
+	<annotation-driven />
+
+	<!-- Handles HTTP GET requests for /resources/** by efficiently serving up static resources in the ${webappRoot}/resources directory -->
+	<resources mapping="/resources/**" location="/resources/" />
+
+	<!-- Resolves views selected for rendering by @Controllers to .jsp resources in the /WEB-INF/views directory -->
+	<beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<beans:property name="prefix" value="jsp/" />
+		<beans:property name="suffix" value=".jsp" />
+	</beans:bean>
+	
+	<context:component-scan base-package="together" />
+	
+	<!-- Interceptor설정 -->	
+	<beans:bean id="sessionChk" class="together.controller.SessionCheckInter"/>
+	<interceptors>
+		<interceptor>
+			<mapping path="/event_user_attend_ok.do"/> <!-- 선택한 이벤트 참석 이력 검색 및 참석-->
+			<mapping path="/event_user_attend_no.do"/> <!-- 이벤트 참여 취소 -->
+			<mapping path="/event_user_attend_mylistPaging.do"/> <!-- 내가 참여한 모든 이벤트 리스트 출력 -->
+			<mapping path="/member_edit.do"/> <!-- 회원정보 수정폼 뷰 -->
+			<mapping path="/member_edit_ok.do"/> <!-- 회원정보 수정(fileupload) -->
+			<mapping path="/member_delete.do"/> <!-- 회원정보 삭제 폼 뷰 -->
+			<mapping path="/member_delete_ok.do"/> <!-- 회원정보 삭제 -->
+			<mapping path="/member_logout.do"/> <!-- 로그아웃 -->
+			<mapping path="/report_check.do"/> <!-- 신고 전 중복신고 검증 -->
+			<mapping path="/report_ok.do"/> <!-- 중복 검증 통과한 신고건 신고 등록 -->
+			<mapping path="/club_join.do"/> <!-- 모임 가입 -->
+			<mapping path="/leave_club.do"/> <!-- 모임 탈퇴 -->
+			<mapping path="/my_club.do"/> <!-- 내가 운영하는 모임 -->
+			<mapping path="/kick_out.do"/> <!-- 내보내기 -->
+			<mapping path="/event_createform.do"/> <!-- 이벤트 만들기 폼 -->
+			<mapping path="/event_create.do"/> <!-- 이벤트 만들기 -->
+			<mapping path="/event_edit.do"/> <!-- 이벤트 수정 -->
+			<mapping path="/event_del.do"/> <!-- 이벤트 삭제 -->
+			<mapping path="/photo_create.do"/> <!-- 사진 등록 -->
+			<mapping path="/photo_delete.do"/> <!-- 사진 삭제 -->
+			<mapping path="/photo_edit.do"/> <!-- 사진 수정 -->
+			<mapping path="/club.do"/> <!-- 모임 생성-->
+			<mapping path="/club_detail.do"/> <!-- 모임 폼-->
+			<mapping path="/club_edit.do"/> <!-- 모임수정 -->
+			<mapping path="/club_delete.do"/> <!-- 모임삭제 -->
+			<mapping path="/insert_heart.do"/> <!-- 좋아요 삽입 -->
+			<mapping path="/remove_heart.do"/> <!-- 좋아요 삭제 -->
+			<mapping path="/heart_list.do"/> <!-- 관심있는 모임 목록 -->
+			
+		<!-- 나중에 추가할 곳 -->
+			<beans:ref bean="sessionChk"/>
+		</interceptor>
+	</interceptors>
+	
+	<!-- 파일 업로드  설정 -->
+	<beans:bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<beans:property name="maxUploadSize" value="10000000"/>	
+	</beans:bean>	
+</beans:beans>
